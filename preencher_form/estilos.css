@@ -1,0 +1,39 @@
+body {
+	background: #003d4c;
+	color: #fff;
+	font-family:'lucida grande',verdana,helvetica,arial,sans-serif;
+	font-size:90%;
+}
+h2 {
+	color: #fff;
+	margin: 0;
+	padding: 0 0 10px 0;
+}
+.content {
+	background-color: #003d4c;
+	border: 1px dashed #fff;
+	margin: 0 auto;
+	padding: 10px;
+	width: 80%;
+}
+.input, .radio, .checkbox, .select {
+	padding: 0 0 8px 0;
+}
+.input label, .radio label, .checkbox label, .select label, .textarea label{
+	color: #8B8B7A;
+	display: inline-block;
+	font-weight: bold;
+	vertical-align: top;
+	width: 110px;
+}
+.input input, .select select, .textarea textarea{
+	width: 85%;
+}
+.actions {
+	padding: 8px 0;
+	text-align: center;
+}
+.actions button {
+	cursor: pointer;
+	margin: 0 0 0 8px;
+}
