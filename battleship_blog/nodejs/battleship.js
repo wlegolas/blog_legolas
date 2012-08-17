@@ -4,7 +4,7 @@ var io = require('socket.io').listen(8088),
     gm = new game.Game();
 
 io.sockets.on('connection', function (socket) {
-	/**
+    /**
      * Evento disparado para informar o início do Jogo
      * @param {Int} playerId ID do Jogador selecionado
      */
@@ -21,24 +21,24 @@ io.sockets.on('connection', function (socket) {
             // Adicionando o Jogador
             gm.addPlayer(playerSelected);
 
-        	// Criando o canal com o ID do Jogador
-        	socket.join( playerSelected.id );
+            // Criando o canal com o ID do Jogador
+            socket.join( playerSelected.id );
 
             // Trocando o nome do Jogador
             msg = msg.replace('PLAYER_NAME', playerSelected.name);
 
-        	// Emit para o outro Jogador a informações que o seu oponente foi selecionado
-    		socket.broadcast.emit('enemyselected', title, msg);
+            // Emit para o outro Jogador a informações que o seu oponente foi selecionado
+            socket.broadcast.emit('enemyselected', title, msg);
 
             // Informando os dados para o Jogador
             socket.emit('playerselected', playerSelected.id, playerSelected.name);
 
-    		// Verificando se todos os Jogadores iniciaram o Jogo
+            // Verificando se todos os Jogadores iniciaram o Jogo
             if(gm.getCountSelectedPlayes() === 2) {
-            	title = 'Jogadores selecionados';
-            	msg = 'Todos jogadores foram selecionados, "<b>' + gm.getCurrentPlayer().name + '</b>" irá iniciar o jogo';
+                title = 'Jogadores selecionados';
+                msg = 'Todos jogadores foram selecionados, "<b>' + gm.getCurrentPlayer().name + '</b>" irá iniciar o jogo';
 
-            	//  Informando para todos os Jogadores o início do Jogo
+                //  Informando para todos os Jogadores o início do Jogo
                 io.sockets.emit('begingameallplayers', title, msg);
             }
         }
@@ -77,7 +77,7 @@ io.sockets.on('connection', function (socket) {
         else {
             // Erro todos os Jogadores não foram selecionado
             socket.emit('error', cellID, 'O seu oponente ainda não foi selecionado.');
-        }    	
+        }       
     });
 
     /**
