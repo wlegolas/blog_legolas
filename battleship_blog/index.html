@@ -1,0 +1,361 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Battleship com NodeJS e Socket.io</title>
+	<meta charset="utf-8" />
+	
+	<!-- CSS -->
+	<link rel="stylesheet" type="text/css" href="css/bootstrap.css" />
+	<link rel="stylesheet" type="text/css" href="css/bootstrap-responsive.css" />
+	<link rel="stylesheet" type="text/css" href="css/jquery.jgrowl.css" />
+	<link rel="stylesheet" type="text/css" href="css/app.css" />
+	
+	<!-- JS -->
+	<script type="text/javascript" src="js/jquery.js"></script>
+	<script type="text/javascript" src="js/jquery.jgrowl.js"></script>
+	<script type="text/javascript" src="js/game.js"></script>
+	<script type="text/javascript" src="http://localhost:8088/socket.io/socket.io.js"></script>
+	<script type="text/javascript" src="js/SocketIO.js"></script> 
+	<script type="text/javascript" src="js/app.js"></script>
+</head>
+<body>
+	<div class="navbar navbar-fixed-top">
+		<div class="navbar-inner">
+			<div class="container">
+				<span class="brand">Battleship</span>
+				<div class="bship-top-info">
+					<div class="input-prepend bship-score">
+						<span class="add-on"><i class="icon-th"></i></span><input type="text" name="ships" id="ships" class="bship-input-center bship-input-ships" value="0" readonly="readonly" />
+					</div>
+					<div class="input-prepend bship-score">
+						<span class="add-on"><i class="icon-fire"></i></span><input type="text" name="shot" id="shot" class="bship-input-center bship-input-fire" value="0" readonly="readonly" />
+					</div>
+					<div class="input-prepend bship-score">
+						<span class="add-on"><i class="icon-flag"></i></span><input type="text" name="score" id="score" class="bship-input-center bship-input-score" value="0" readonly="readonly" />
+					</div>
+					<div class="input-prepend bship-score">
+						<span class="add-on"><i class="icon-user"></i></span><input type="text" name="player" id="player" class="bship-input-user" readonly="readonly" value="Capt. Jack Sparrow" />
+					</div>
+					<a class="btn btn-success" id="btn-begin-game" href="#"><i class="icon-ok"></i> Iniciar Jogo</a>
+					<a class="btn btn-danger" id="btn-close-game" href="#"><i class="icon-remove"></i> Desistir do Jogo</a>
+					<input type="hidden" name="playerId" id="playerId" value="0" />
+				</div>
+			</div>
+      </div>
+    </div>
+	<div class="container bship-content">
+		<div class="bship-ship"></div>
+		<div class="row">
+			<div class="span6 bship-frame">
+				<div class="bship-title-frame">
+					<span class="bship-title bship-defense">Grid de Defesa</span>
+				</div>
+				<table class="bship-table-battle" id="grid-defensive">
+					<tbody>
+						<tr>
+							<td class="bship-legend bship-pad">A</td>
+							<td id="defensive_A1" class="bship-cell"></td>
+							<td id="defensive_A2" class="bship-cell"></td>
+							<td id="defensive_A3" class="bship-cell"></td>
+							<td id="defensive_A4" class="bship-cell"></td>
+							<td id="defensive_A5" class="bship-cell"></td>
+							<td id="defensive_A6" class="bship-cell"></td>
+							<td id="defensive_A7" class="bship-cell"></td>
+							<td id="defensive_A8" class="bship-cell"></td>
+							<td id="defensive_A9" class="bship-cell"></td>
+							<td id="defensive_A10" class="bship-cell"></td>
+						</tr>
+						<tr>
+							<td class="bship-legend bship-pad">B</td>
+							<td id="defensive_B1" class="bship-cell"></td>
+							<td id="defensive_B2" class="bship-cell"></td>
+							<td id="defensive_B3" class="bship-cell"></td>
+							<td id="defensive_B4" class="bship-cell"></td>
+							<td id="defensive_B5" class="bship-cell"></td>
+							<td id="defensive_B6" class="bship-cell"></td>
+							<td id="defensive_B7" class="bship-cell"></td>
+							<td id="defensive_B8" class="bship-cell"></td>
+							<td id="defensive_B9" class="bship-cell"></td>
+							<td id="defensive_B10" class="bship-cell"></td>
+						</tr>
+						<tr>
+							<td class="bship-legend bship-pad">C</td>
+							<td id="defensive_C1" class="bship-cell"></td>
+							<td id="defensive_C2" class="bship-cell"></td>
+							<td id="defensive_C3" class="bship-cell"></td>
+							<td id="defensive_C4" class="bship-cell"></td>
+							<td id="defensive_C5" class="bship-cell"></td>
+							<td id="defensive_C6" class="bship-cell"></td>
+							<td id="defensive_C7" class="bship-cell"></td>
+							<td id="defensive_C8" class="bship-cell"></td>
+							<td id="defensive_C9" class="bship-cell"></td>
+							<td id="defensive_C10" class="bship-cell"></td>
+						</tr>
+						<tr>
+							<td class="bship-legend bship-pad">D</td>
+							<td id="defensive_D1" class="bship-cell"></td>
+							<td id="defensive_D2" class="bship-cell"></td>
+							<td id="defensive_D3" class="bship-cell"></td>
+							<td id="defensive_D4" class="bship-cell"></td>
+							<td id="defensive_D5" class="bship-cell"></td>
+							<td id="defensive_D6" class="bship-cell"></td>
+							<td id="defensive_D7" class="bship-cell"></td>
+							<td id="defensive_D8" class="bship-cell"></td>
+							<td id="defensive_D9" class="bship-cell"></td>
+							<td id="defensive_D10" class="bship-cell"></td>
+						</tr>
+						<tr>
+							<td class="bship-legend bship-pad">E</td>
+							<td id="defensive_E1" class="bship-cell"></td>
+							<td id="defensive_E2" class="bship-cell"></td>
+							<td id="defensive_E3" class="bship-cell"></td>
+							<td id="defensive_E4" class="bship-cell"></td>
+							<td id="defensive_E5" class="bship-cell"></td>
+							<td id="defensive_E6" class="bship-cell"></td>
+							<td id="defensive_E7" class="bship-cell"></td>
+							<td id="defensive_E8" class="bship-cell"></td>
+							<td id="defensive_E9" class="bship-cell"></td>
+							<td id="defensive_E10" class="bship-cell"></td>
+						</tr>
+						<tr>
+							<td class="bship-legend bship-pad">F</td>
+							<td id="defensive_F1" class="bship-cell"></td>
+							<td id="defensive_F2" class="bship-cell"></td>
+							<td id="defensive_F3" class="bship-cell"></td>
+							<td id="defensive_F4" class="bship-cell"></td>
+							<td id="defensive_F5" class="bship-cell"></td>
+							<td id="defensive_F6" class="bship-cell"></td>
+							<td id="defensive_F7" class="bship-cell"></td>
+							<td id="defensive_F8" class="bship-cell"></td>
+							<td id="defensive_F9" class="bship-cell"></td>
+							<td id="defensive_F10" class="bship-cell"></td>
+						</tr>
+						<tr>
+							<td class="bship-legend bship-pad">G</td>
+							<td id="defensive_G1" class="bship-cell"></td>
+							<td id="defensive_G2" class="bship-cell"></td>
+							<td id="defensive_G3" class="bship-cell"></td>
+							<td id="defensive_G4" class="bship-cell"></td>
+							<td id="defensive_G5" class="bship-cell"></td>
+							<td id="defensive_G6" class="bship-cell"></td>
+							<td id="defensive_G7" class="bship-cell"></td>
+							<td id="defensive_G8" class="bship-cell"></td>
+							<td id="defensive_G9" class="bship-cell"></td>
+							<td id="defensive_G10" class="bship-cell"></td>
+						</tr>
+						<tr>
+							<td class="bship-legend bship-pad">H</td>
+							<td id="defensive_H1" class="bship-cell"></td>
+							<td id="defensive_H2" class="bship-cell"></td>
+							<td id="defensive_H3" class="bship-cell"></td>
+							<td id="defensive_H4" class="bship-cell"></td>
+							<td id="defensive_H5" class="bship-cell"></td>
+							<td id="defensive_H6" class="bship-cell"></td>
+							<td id="defensive_H7" class="bship-cell"></td>
+							<td id="defensive_H8" class="bship-cell"></td>
+							<td id="defensive_H9" class="bship-cell"></td>
+							<td id="defensive_H10" class="bship-cell"></td>
+						</tr>
+						<tr>
+							<td class="bship-legend bship-pad">I</td>
+							<td id="defensive_I1" class="bship-cell"></td>
+							<td id="defensive_I2" class="bship-cell"></td>
+							<td id="defensive_I3" class="bship-cell"></td>
+							<td id="defensive_I4" class="bship-cell"></td>
+							<td id="defensive_I5" class="bship-cell"></td>
+							<td id="defensive_I6" class="bship-cell"></td>
+							<td id="defensive_I7" class="bship-cell"></td>
+							<td id="defensive_I8" class="bship-cell"></td>
+							<td id="defensive_I9" class="bship-cell"></td>
+							<td id="defensive_I10" class="bship-cell"></td>
+						</tr>
+						<tr>
+							<td class="bship-legend bship-pad">J</td>
+							<td id="defensive_J1" class="bship-cell"></td>
+							<td id="defensive_J2" class="bship-cell"></td>
+							<td id="defensive_J3" class="bship-cell"></td>
+							<td id="defensive_J4" class="bship-cell"></td>
+							<td id="defensive_J5" class="bship-cell"></td>
+							<td id="defensive_J6" class="bship-cell"></td>
+							<td id="defensive_J7" class="bship-cell"></td>
+							<td id="defensive_J8" class="bship-cell"></td>
+							<td id="defensive_J9" class="bship-cell"></td>
+							<td id="defensive_J10" class="bship-cell"></td>
+						</tr>
+					</tbody>
+					<tfoot>
+						<tr>
+							<td class="bship-legend">&nbsp;</td>
+							<td class="bship-legend">1</td>
+							<td class="bship-legend">2</td>
+							<td class="bship-legend">3</td>
+							<td class="bship-legend">4</td>
+							<td class="bship-legend">5</td>
+							<td class="bship-legend">6</td>
+							<td class="bship-legend">7</td>
+							<td class="bship-legend">8</td>
+							<td class="bship-legend">9</td>
+							<td class="bship-legend">10</td>
+						</tr>
+					</tfoot>
+				</table>
+			</div>
+			
+			<div class="span6 bship-frame">
+				<div class="bship-title-frame">
+					<span class="bship-title bship-offensive">Grid de Ataque</span>
+				</div>
+				<table class="bship-table-battle  bship-disable" id="grid-offensive">
+					<tbody>
+						<tr>
+							<td class="bship-legend bship-pad">A</td>
+							<td id="offensive_A1" class="bship-cell"></td>
+							<td id="offensive_A2" class="bship-cell"></td>
+							<td id="offensive_A3" class="bship-cell"></td>
+							<td id="offensive_A4" class="bship-cell"></td>
+							<td id="offensive_A5" class="bship-cell"></td>
+							<td id="offensive_A6" class="bship-cell"></td>
+							<td id="offensive_A7" class="bship-cell"></td>
+							<td id="offensive_A8" class="bship-cell"></td>
+							<td id="offensive_A9" class="bship-cell"></td>
+							<td id="offensive_A10" class="bship-cell"></td>
+						</tr>
+						<tr>
+							<td class="bship-legend bship-pad">B</td>
+							<td id="offensive_B1" class="bship-cell"></td>
+							<td id="offensive_B2" class="bship-cell"></td>
+							<td id="offensive_B3" class="bship-cell"></td>
+							<td id="offensive_B4" class="bship-cell"></td>
+							<td id="offensive_B5" class="bship-cell"></td>
+							<td id="offensive_B6" class="bship-cell"></td>
+							<td id="offensive_B7" class="bship-cell"></td>
+							<td id="offensive_B8" class="bship-cell"></td>
+							<td id="offensive_B9" class="bship-cell"></td>
+							<td id="offensive_B10" class="bship-cell"></td>
+						</tr>
+						<tr>
+							<td class="bship-legend bship-pad">C</td>
+							<td id="offensive_C1" class="bship-cell"></td>
+							<td id="offensive_C2" class="bship-cell"></td>
+							<td id="offensive_C3" class="bship-cell"></td>
+							<td id="offensive_C4" class="bship-cell"></td>
+							<td id="offensive_C5" class="bship-cell"></td>
+							<td id="offensive_C6" class="bship-cell"></td>
+							<td id="offensive_C7" class="bship-cell"></td>
+							<td id="offensive_C8" class="bship-cell"></td>
+							<td id="offensive_C9" class="bship-cell"></td>
+							<td id="offensive_C10" class="bship-cell"></td>
+						</tr>
+						<tr>
+							<td class="bship-legend bship-pad">D</td>
+							<td id="offensive_D1" class="bship-cell"></td>
+							<td id="offensive_D2" class="bship-cell"></td>
+							<td id="offensive_D3" class="bship-cell"></td>
+							<td id="offensive_D4" class="bship-cell"></td>
+							<td id="offensive_D5" class="bship-cell"></td>
+							<td id="offensive_D6" class="bship-cell"></td>
+							<td id="offensive_D7" class="bship-cell"></td>
+							<td id="offensive_D8" class="bship-cell"></td>
+							<td id="offensive_D9" class="bship-cell"></td>
+							<td id="offensive_D10" class="bship-cell"></td>
+						</tr>
+						<tr>
+							<td class="bship-legend bship-pad">E</td>
+							<td id="offensive_E1" class="bship-cell"></td>
+							<td id="offensive_E2" class="bship-cell"></td>
+							<td id="offensive_E3" class="bship-cell"></td>
+							<td id="offensive_E4" class="bship-cell"></td>
+							<td id="offensive_E5" class="bship-cell"></td>
+							<td id="offensive_E6" class="bship-cell"></td>
+							<td id="offensive_E7" class="bship-cell"></td>
+							<td id="offensive_E8" class="bship-cell"></td>
+							<td id="offensive_E9" class="bship-cell"></td>
+							<td id="offensive_E10" class="bship-cell"></td>
+						</tr>
+						<tr>
+							<td class="bship-legend bship-pad">F</td>
+							<td id="offensive_F1" class="bship-cell"></td>
+							<td id="offensive_F2" class="bship-cell"></td>
+							<td id="offensive_F3" class="bship-cell"></td>
+							<td id="offensive_F4" class="bship-cell"></td>
+							<td id="offensive_F5" class="bship-cell"></td>
+							<td id="offensive_F6" class="bship-cell"></td>
+							<td id="offensive_F7" class="bship-cell"></td>
+							<td id="offensive_F8" class="bship-cell"></td>
+							<td id="offensive_F9" class="bship-cell"></td>
+							<td id="offensive_F10" class="bship-cell"></td>
+						</tr>
+						<tr>
+							<td class="bship-legend bship-pad">G</td>
+							<td id="offensive_G1" class="bship-cell"></td>
+							<td id="offensive_G2" class="bship-cell"></td>
+							<td id="offensive_G3" class="bship-cell"></td>
+							<td id="offensive_G4" class="bship-cell"></td>
+							<td id="offensive_G5" class="bship-cell"></td>
+							<td id="offensive_G6" class="bship-cell"></td>
+							<td id="offensive_G7" class="bship-cell"></td>
+							<td id="offensive_G8" class="bship-cell"></td>
+							<td id="offensive_G9" class="bship-cell"></td>
+							<td id="offensive_G10" class="bship-cell"></td>
+						</tr>
+						<tr>
+							<td class="bship-legend bship-pad">H</td>
+							<td id="offensive_H1" class="bship-cell"></td>
+							<td id="offensive_H2" class="bship-cell"></td>
+							<td id="offensive_H3" class="bship-cell"></td>
+							<td id="offensive_H4" class="bship-cell"></td>
+							<td id="offensive_H5" class="bship-cell"></td>
+							<td id="offensive_H6" class="bship-cell"></td>
+							<td id="offensive_H7" class="bship-cell"></td>
+							<td id="offensive_H8" class="bship-cell"></td>
+							<td id="offensive_H9" class="bship-cell"></td>
+							<td id="offensive_H10" class="bship-cell"></td>
+						</tr>
+						<tr>
+							<td class="bship-legend bship-pad">I</td>
+							<td id="offensive_I1" class="bship-cell"></td>
+							<td id="offensive_I2" class="bship-cell"></td>
+							<td id="offensive_I3" class="bship-cell"></td>
+							<td id="offensive_I4" class="bship-cell"></td>
+							<td id="offensive_I5" class="bship-cell"></td>
+							<td id="offensive_I6" class="bship-cell"></td>
+							<td id="offensive_I7" class="bship-cell"></td>
+							<td id="offensive_I8" class="bship-cell"></td>
+							<td id="offensive_I9" class="bship-cell"></td>
+							<td id="offensive_I10" class="bship-cell"></td>
+						</tr>
+						<tr>
+							<td class="bship-legend bship-pad">J</td>
+							<td id="offensive_J1" class="bship-cell"></td>
+							<td id="offensive_J2" class="bship-cell"></td>
+							<td id="offensive_J3" class="bship-cell"></td>
+							<td id="offensive_J4" class="bship-cell"></td>
+							<td id="offensive_J5" class="bship-cell"></td>
+							<td id="offensive_J6" class="bship-cell"></td>
+							<td id="offensive_J7" class="bship-cell"></td>
+							<td id="offensive_J8" class="bship-cell"></td>
+							<td id="offensive_J9" class="bship-cell"></td>
+							<td id="offensive_J10" class="bship-cell"></td>
+						</tr>
+					</tbody>
+					<tfoot>
+						<tr>
+							<td class="bship-legend">&nbsp;</td>
+							<td class="bship-legend">1</td>
+							<td class="bship-legend">2</td>
+							<td class="bship-legend">3</td>
+							<td class="bship-legend">4</td>
+							<td class="bship-legend">5</td>
+							<td class="bship-legend">6</td>
+							<td class="bship-legend">7</td>
+							<td class="bship-legend">8</td>
+							<td class="bship-legend">9</td>
+							<td class="bship-legend">10</td>
+						</tr>
+					</tfoot>
+				</table>
+			</div>
+		</div>
+	</div>
+</body>
+</html>
